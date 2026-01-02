@@ -1,0 +1,9 @@
+streamlit>=1.36
+pandas>=2.2
+sqlmodel>=0.0.21
+sqlalchemy>=2.0
+python-dotenv>=1.0
+pymupdf>=1.24
+requests>=2.32
+beautifulsoup4>=4.12
+tenacity>=8.5

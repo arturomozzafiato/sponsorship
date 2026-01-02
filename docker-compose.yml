@@ -1,0 +1,49 @@
+version: '3.9'
+services:
+  app:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      - DB_URL=sqlite:////data/outreach.db
+      - LLM_PROVIDER=none
+      - SMTP_HOST=smtp4dev
+      - SMTP_PORT=25
+      - SMTP_USER=demo
+      - SMTP_PASS=demo
+      - SMTP_FROM=demo@example.com
+      - SMTP_USE_TLS=false
+    volumes:
+      - type: bind
+        source: ./uploads
+        target: /app/uploads
+      - type: volume
+        source: appdata
+        target: /data
+    depends_on:
+      - smtp4dev
+  worker:
+    build: .
+    command: python -m outreach_app.queue.worker --once
+    environment:
+      - DB_URL=sqlite:////data/outreach.db
+      - LLM_PROVIDER=none
+      - SMTP_HOST=smtp4dev
+      - SMTP_PORT=25
+      - SMTP_USER=demo
+      - SMTP_PASS=demo
+      - SMTP_FROM=demo@example.com
+      - SMTP_USE_TLS=false
+    volumes:
+      - type: volume
+        source: appdata
+        target: /data
+    depends_on:
+      - smtp4dev
+  smtp4dev:
+    image: rnwood/smtp4dev
+    ports:
+      - "3000:80"
+      - "2525:25"
+volumes:
+  appdata:
